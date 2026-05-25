@@ -1,0 +1,2 @@
+﻿"""CRUD for ingested documents."""
+

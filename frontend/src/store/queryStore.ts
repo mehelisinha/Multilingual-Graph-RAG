@@ -1,0 +1,3 @@
+﻿// Zustand query store.
+
+export {};

@@ -1,0 +1,2 @@
+﻿"""spaCy multilingual NER."""
+

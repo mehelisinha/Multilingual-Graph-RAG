@@ -1,0 +1,3 @@
+﻿// Query type definitions.
+
+export {};

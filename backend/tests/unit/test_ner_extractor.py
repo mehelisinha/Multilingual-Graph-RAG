@@ -1,0 +1,2 @@
+﻿"""NER extractor tests."""
+

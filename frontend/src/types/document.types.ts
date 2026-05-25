@@ -1,0 +1,3 @@
+﻿// Document type definitions.
+
+export {};

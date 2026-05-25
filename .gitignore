@@ -1,0 +1,42 @@
+# Environment
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Data (large files — download via scripts)
+data/raw/multieurlex/*
+data/raw/eurlex_xml/*
+data/processed/chunks/*
+data/processed/embeddings/*
+!data/**/.gitkeep
+
+# Models
+models/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log

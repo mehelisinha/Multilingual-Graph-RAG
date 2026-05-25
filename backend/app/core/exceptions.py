@@ -1,0 +1,2 @@
+﻿"""Custom HTTP exception classes."""
+

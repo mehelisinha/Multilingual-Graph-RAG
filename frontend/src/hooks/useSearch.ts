@@ -1,0 +1,3 @@
+﻿// Query API hook.
+
+export {};

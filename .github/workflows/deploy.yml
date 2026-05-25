@@ -1,0 +1,5 @@
+﻿# Deploy: build + push on main merge
+name: Deploy
+on: [push]
+jobs: {}
+

@@ -1,0 +1,3 @@
+﻿// Auth type definitions.
+
+export {};

@@ -1,0 +1,5 @@
+﻿# CI: lint + test on PR
+name: CI
+on: [pull_request]
+jobs: {}
+

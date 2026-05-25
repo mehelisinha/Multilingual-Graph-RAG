@@ -1,0 +1,3 @@
+﻿// Graph type definitions.
+
+export {};
