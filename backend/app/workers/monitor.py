@@ -1,2 +1,1 @@
-﻿"""Worker health and Prometheus metrics."""
-
+"""Worker health and Prometheus metrics."""

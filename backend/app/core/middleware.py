@@ -1,2 +1,1 @@
-﻿"""CORS, rate limiting, request ID."""
-
+"""CORS, rate limiting, request ID."""

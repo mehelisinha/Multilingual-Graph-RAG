@@ -1,2 +1,1 @@
-﻿"""Celery task definitions."""
-
+"""Celery task definitions."""

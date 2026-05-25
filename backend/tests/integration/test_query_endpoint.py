@@ -1,2 +1,1 @@
-﻿"""Query endpoint integration tests."""
-
+"""Query endpoint integration tests."""

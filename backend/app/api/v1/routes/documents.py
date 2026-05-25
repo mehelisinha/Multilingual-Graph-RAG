@@ -1,2 +1,1 @@
-﻿"""CRUD for ingested documents."""
-
+"""CRUD for ingested documents."""

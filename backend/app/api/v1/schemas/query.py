@@ -1,2 +1,1 @@
-﻿"""QueryRequest, QueryResponse, ChunkResult."""
-
+"""QueryRequest, QueryResponse, ChunkResult."""

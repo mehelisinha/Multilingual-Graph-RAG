@@ -1,2 +1,1 @@
-﻿"""Language detection (fastText)."""
-
+"""Language detection (fastText)."""

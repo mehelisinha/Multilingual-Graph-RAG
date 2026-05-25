@@ -1,2 +1,1 @@
-﻿"""Shared dependency injection."""
-
+"""Shared dependency injection."""

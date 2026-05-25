@@ -1,2 +1,1 @@
-﻿"""POST /login, /refresh, /logout."""
-
+"""POST /login, /refresh, /logout."""

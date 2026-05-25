@@ -1,2 +1,1 @@
-﻿"""Embedder tests."""
-
+"""Embedder tests."""

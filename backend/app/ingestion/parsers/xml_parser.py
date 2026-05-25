@@ -1,2 +1,1 @@
-﻿"""EUR-Lex Formex XML parser."""
-
+"""EUR-Lex Formex XML parser."""

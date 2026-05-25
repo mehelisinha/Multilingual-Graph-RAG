@@ -1,2 +1,1 @@
-﻿"""DocumentRecord, DocumentCreate."""
-
+"""DocumentRecord, DocumentCreate."""

@@ -1,2 +1,1 @@
-﻿"""RAG pipeline package."""
-
+"""RAG pipeline package."""

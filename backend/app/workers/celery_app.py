@@ -1,2 +1,1 @@
-﻿"""Celery app factory."""
-
+"""Celery app factory."""

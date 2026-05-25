@@ -1,2 +1,1 @@
-﻿"""GET ingestion job status."""
-
+"""GET ingestion job status."""

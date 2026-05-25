@@ -1,2 +1,1 @@
-﻿"""Build graph from NER output."""
-
+"""Build graph from NER output."""

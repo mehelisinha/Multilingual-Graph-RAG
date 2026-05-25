@@ -1,2 +1,1 @@
-﻿"""Milvus ANN retrieval service."""
-
+"""Milvus ANN retrieval service."""

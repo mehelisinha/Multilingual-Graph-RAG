@@ -1,2 +1,1 @@
-﻿"""End-to-end pipeline tests."""
-
+"""End-to-end pipeline tests."""

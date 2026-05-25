@@ -1,2 +1,1 @@
-﻿"""Graph query integration tests."""
-
+"""Graph query integration tests."""

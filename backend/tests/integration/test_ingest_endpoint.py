@@ -1,2 +1,1 @@
-﻿"""Ingest endpoint integration tests."""
-
+"""Ingest endpoint integration tests."""

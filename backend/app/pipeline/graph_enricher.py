@@ -1,2 +1,1 @@
-﻿"""Fetch graph context for retrieved chunks."""
-
+"""Fetch graph context for retrieved chunks."""

@@ -1,2 +1,1 @@
-﻿"""Core utilities."""
-
+"""Core utilities."""

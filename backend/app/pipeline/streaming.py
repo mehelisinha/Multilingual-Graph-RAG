@@ -1,2 +1,1 @@
-﻿"""SSE streaming response helper."""
-
+"""SSE streaming response helper."""

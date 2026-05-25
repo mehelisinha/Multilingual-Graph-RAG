@@ -1,2 +1,1 @@
-﻿"""Ingestion orchestration."""
-
+"""Ingestion orchestration."""

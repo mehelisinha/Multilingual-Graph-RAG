@@ -1,2 +1,1 @@
-﻿"""mE5/LaBSE embedding wrapper."""
-
+"""mE5/LaBSE embedding wrapper."""

@@ -1,2 +1,1 @@
-﻿"""Structured JSON logging."""
-
+"""Structured JSON logging."""

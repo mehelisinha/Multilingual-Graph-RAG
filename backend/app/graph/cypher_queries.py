@@ -1,2 +1,1 @@
-﻿"""Parameterised Cypher query strings."""
-
+"""Parameterised Cypher query strings."""

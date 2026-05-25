@@ -1,2 +1,1 @@
-﻿"""PyMuPDF text extraction."""
-
+"""PyMuPDF text extraction."""

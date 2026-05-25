@@ -1,2 +1,1 @@
-﻿"""BeautifulSoup HTML parser."""
-
+"""BeautifulSoup HTML parser."""

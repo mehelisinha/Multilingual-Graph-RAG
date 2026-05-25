@@ -1,2 +1,1 @@
-﻿"""GET /graph/entities, /graph/subgraph."""
-
+"""GET /graph/entities, /graph/subgraph."""

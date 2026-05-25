@@ -1,2 +1,1 @@
-﻿"""Document parsers."""
-
+"""Document parsers."""

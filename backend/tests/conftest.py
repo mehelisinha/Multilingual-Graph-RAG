@@ -1,2 +1,1 @@
-﻿"""Pytest fixtures."""
-
+"""Pytest fixtures."""

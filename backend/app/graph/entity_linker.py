@@ -1,2 +1,1 @@
-﻿"""Link NER entities to graph nodes."""
-
+"""Link NER entities to graph nodes."""

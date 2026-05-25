@@ -1,2 +1,1 @@
-﻿"""Redis client."""
-
+"""Redis client."""

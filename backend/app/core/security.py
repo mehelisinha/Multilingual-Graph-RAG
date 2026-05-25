@@ -1,2 +1,1 @@
-﻿"""JWT encode/decode, password hashing."""
-
+"""JWT encode/decode, password hashing."""

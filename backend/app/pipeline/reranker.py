@@ -1,2 +1,1 @@
-﻿"""Cross-encoder reranking."""
-
+"""Cross-encoder reranking."""

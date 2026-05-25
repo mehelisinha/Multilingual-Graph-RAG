@@ -1,2 +1,1 @@
-﻿"""POST /query — main RAG endpoint."""
-
+"""POST /query — main RAG endpoint."""

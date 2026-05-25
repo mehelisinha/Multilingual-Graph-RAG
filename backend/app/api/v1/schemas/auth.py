@@ -1,2 +1,1 @@
-﻿"""LoginRequest, TokenResponse."""
-
+"""LoginRequest, TokenResponse."""

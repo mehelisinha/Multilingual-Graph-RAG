@@ -1,2 +1,1 @@
-﻿"""Semantic chunking."""
-
+"""Semantic chunking."""

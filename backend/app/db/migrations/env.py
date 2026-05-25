@@ -1,2 +1,1 @@
-﻿"""Alembic environment."""
-
+"""Alembic environment."""

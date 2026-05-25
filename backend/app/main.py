@@ -1,2 +1,1 @@
-﻿"""FastAPI app factory and lifespan hooks."""
-
+"""FastAPI app factory and lifespan hooks."""

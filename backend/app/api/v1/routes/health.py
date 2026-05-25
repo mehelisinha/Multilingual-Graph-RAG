@@ -1,2 +1,1 @@
-﻿"""GET /health, /metrics."""
-
+"""GET /health, /metrics."""

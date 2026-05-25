@@ -1,2 +1,1 @@
-﻿"""Abstract parser interface."""
-
+"""Abstract parser interface."""

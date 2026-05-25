@@ -1,2 +1,1 @@
-﻿"""Custom HTTP exception classes."""
-
+"""Custom HTTP exception classes."""

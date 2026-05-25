@@ -1,2 +1,1 @@
-﻿"""RAG chain tests."""
-
+"""RAG chain tests."""

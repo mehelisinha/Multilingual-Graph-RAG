@@ -1,2 +1,1 @@
-﻿"""Chunker tests."""
-
+"""Chunker tests."""

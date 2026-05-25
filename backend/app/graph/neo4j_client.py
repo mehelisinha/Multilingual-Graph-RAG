@@ -1,2 +1,1 @@
-﻿"""Neo4j driver singleton."""
-
+"""Neo4j driver singleton."""

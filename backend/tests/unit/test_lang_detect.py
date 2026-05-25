@@ -1,2 +1,1 @@
-﻿"""Language detection tests."""
-
+"""Language detection tests."""

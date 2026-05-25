@@ -1,2 +1,1 @@
-﻿"""Node labels, relationship types, constraints."""
-
+"""Node labels, relationship types, constraints."""

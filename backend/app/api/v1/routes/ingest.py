@@ -1,2 +1,1 @@
-﻿"""POST /ingest — upload and start job."""
-
+"""POST /ingest — upload and start job."""

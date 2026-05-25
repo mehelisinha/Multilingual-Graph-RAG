@@ -1,2 +1,1 @@
-﻿"""Aggregates all route prefixes."""
-
+"""Aggregates all route prefixes."""

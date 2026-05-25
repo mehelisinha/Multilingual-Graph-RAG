@@ -1,2 +1,1 @@
-﻿"""SQLAlchemy async engine."""
-
+"""SQLAlchemy async engine."""

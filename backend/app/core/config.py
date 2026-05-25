@@ -1,2 +1,1 @@
-﻿"""Pydantic Settings — all env vars."""
-
+"""Pydantic Settings — all env vars."""

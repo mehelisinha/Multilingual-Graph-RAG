@@ -1,2 +1,1 @@
-﻿"""IngestRequest, JobStatus."""
-
+"""IngestRequest, JobStatus."""
