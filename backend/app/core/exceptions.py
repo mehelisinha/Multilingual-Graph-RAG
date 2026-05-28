@@ -23,3 +23,8 @@ class AuthorizationError(AppHTTPException):
 class NotFoundError(AppHTTPException):
     def __init__(self, detail: str = "Resource not found") -> None:
         super().__init__(status_code=status.HTTP_404_NOT_FOUND, detail=detail)
+
+
+class PipelineUnavailableError(AppHTTPException):
+    def __init__(self, detail: str = "Retrieval pipeline is unavailable") -> None:
+        super().__init__(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=detail)

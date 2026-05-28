@@ -6,7 +6,7 @@ Enterprise knowledge intelligence system combining multilingual retrieval-augmen
 
 - **Backend:** FastAPI, SQLAlchemy 2.0 (async), Alembic, JWT auth, Redis
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Zustand, React Router
-- **Storage:** PostgreSQL, Redis, Neo4j, Milvus (infrastructure ready for Phase 2+)
+- **Storage:** PostgreSQL, Redis, Neo4j, Milvus (vector retrieval active in Phase 2)
 - **DevOps:** Docker Compose, GitHub Actions CI, Ruff, mypy, ESLint, Prettier
 
 ## Prerequisites
@@ -74,7 +74,24 @@ npm run dev
 | `make test` | Run pytest + Vitest |
 | `make typecheck` | Run mypy + tsc |
 
-## API endpoints (Phase 1)
+## Phase 2 — Load sample data and query
+
+```bash
+# Download MultiEURLEX sample (requires HuggingFace `datasets`)
+cd backend && pip install -r requirements-dev.txt
+python ../data/scripts/download_multieurlex.py --sample 200
+
+# Index into Milvus (Milvus must be running: make dev-infra)
+python ../data/scripts/ingest_to_milvus.py
+
+# Optional: fastText language model (~900MB)
+mkdir -p models
+curl -L -o models/lid.176.bin https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin
+```
+
+Use the **Search** page at http://localhost:5173 to run cross-lingual queries. The API streams results via SSE at `POST /api/v1/query`.
+
+## API endpoints
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
@@ -82,6 +99,7 @@ npm run dev
 | POST | `/api/v1/auth/refresh` | Public | Refresh access token |
 | POST | `/api/v1/auth/logout` | Public | Revoke refresh token |
 | GET | `/api/v1/auth/me` | JWT | Current user profile |
+| POST | `/api/v1/query` | JWT | Multilingual RAG query (SSE stream) |
 | GET | `/api/v1/health` | Public | Service health check |
 | GET | `/api/v1/metrics` | Public | Prometheus metrics |
 
@@ -106,7 +124,7 @@ npm run dev
 | Phase | Status | Deliverables |
 |-------|--------|--------------|
 | **1 — Foundation** | Complete | Docker stack, FastAPI skeleton, JWT auth, React scaffold, CI |
-| 2 — Multilingual RAG | Planned | Embeddings, Milvus, query endpoint, SearchPage |
+| **2 — Multilingual RAG** | Complete | mE5 embeddings, Milvus, fastText/langdetect, query SSE, SearchPage |
 | 3 — Graph Layer | Planned | Neo4j NER, graph traversal, GraphViewer |
 | 4 — Ingestion UI | Planned | Upload, Celery pipeline, Admin dashboard |
 | 5 — Production | Planned | Reranker, Cloud Run deploy, E2E tests |

@@ -13,7 +13,7 @@ from app.core.security import hash_password
 from app.db.base import Base
 from app.db.models.user import User
 from app.db.postgres import configure_engine, dispose_engine, get_engine
-from app.dependencies import get_db
+from app.dependencies import get_db, get_rag_chain
 from app.main import create_app
 from app.services.user_service import UserRepository
 
@@ -79,35 +79,43 @@ async def seeded_user(db_session: AsyncSession) -> User:
 
 
 @pytest_asyncio.fixture
-async def client(
+async def app(
     test_settings: Settings,
     session_factory,
     mock_redis: AsyncMock,
-) -> AsyncGenerator[AsyncClient, None]:
+):
     configure_engine(test_settings)
-    app = create_app(test_settings)
+    application = create_app(test_settings)
 
     async def override_get_db() -> AsyncGenerator[AsyncSession, None]:
         async with session_factory() as session:
             yield session
             await session.commit()
 
-    app.dependency_overrides[get_db] = override_get_db
+    application.dependency_overrides[get_db] = override_get_db
 
     with (
         patch("app.db.redis.get_redis_client", return_value=mock_redis),
         patch("app.services.health_service.HealthService.check_neo4j", return_value="down"),
         patch("app.services.health_service.HealthService.check_milvus", return_value="down"),
     ):
-        transport = ASGITransport(app=app)
-        async with AsyncClient(transport=transport, base_url="http://test") as ac:
-            yield ac
+        yield application
 
-    app.dependency_overrides.clear()
+    application.dependency_overrides.clear()
+    get_rag_chain.cache_clear()
+
+
+@pytest_asyncio.fixture
+async def client(app) -> AsyncGenerator[AsyncClient, None]:
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        yield ac
 
 
 @pytest.fixture(autouse=True)
 def clear_settings_cache() -> Generator[None, None, None]:
     get_settings.cache_clear()
+    get_rag_chain.cache_clear()
     yield
     get_settings.cache_clear()
+    get_rag_chain.cache_clear()

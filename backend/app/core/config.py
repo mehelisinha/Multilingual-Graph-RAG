@@ -37,6 +37,18 @@ class Settings(BaseSettings):
     milvus_port: int = 19530
     milvus_collection_name: str = "multilingual_chunks"
 
+    embedding_model: str = "intfloat/multilingual-e5-large"
+    embedding_dimension: int = Field(default=1024, ge=1)
+    fasttext_model_path: str = "./models/lid.176.bin"
+
+    llm_provider: Literal["ollama", "openai", "groq"] = "ollama"
+    ollama_base_url: str = "http://localhost:11434"
+    ollama_model: str = "mistral:7b-instruct"
+    openai_api_key: str = ""
+    groq_api_key: str = ""
+
+    default_top_k: int = Field(default=10, ge=1, le=20)
+
     neo4j_uri: str = "bolt://localhost:7687"
     neo4j_user: str = "neo4j"
     neo4j_password: str = "changeme"
@@ -72,6 +84,11 @@ class Settings(BaseSettings):
     @property
     def is_development(self) -> bool:
         return self.environment == "development"
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def milvus_uri(self) -> str:
+        return f"http://{self.milvus_host}:{self.milvus_port}"
 
 
 @lru_cache

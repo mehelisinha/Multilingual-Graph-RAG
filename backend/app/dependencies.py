@@ -1,6 +1,7 @@
 """Shared FastAPI dependency injection."""
 
 from collections.abc import AsyncGenerator
+from functools import lru_cache
 
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -9,10 +10,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.exceptions import AuthenticationError
 from app.db.models.user import User
 from app.db.postgres import get_db_session
+from app.pipeline.rag_chain import RAGChain
 from app.services.auth_service import AuthService
 from app.services.user_service import UserRepository
 
 bearer_scheme = HTTPBearer(auto_error=False)
+
+
+@lru_cache
+def get_rag_chain() -> RAGChain:
+    return RAGChain()
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
