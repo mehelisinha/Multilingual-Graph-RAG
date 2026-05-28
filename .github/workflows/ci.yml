@@ -40,7 +40,7 @@ jobs:
 
       - name: mypy (type check)
         working-directory: backend
-        run: mypy app
+        run: mypy --config-file mypy.ini app
 
   backend-test:
     name: Backend · pytest
