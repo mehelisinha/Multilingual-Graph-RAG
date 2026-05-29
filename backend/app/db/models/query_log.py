@@ -1,0 +1,2 @@
+﻿"""QueryLog ORM model."""
+

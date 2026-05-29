@@ -28,8 +28,8 @@ data/processed/chunks/*
 data/processed/embeddings/*
 !data/**/.gitkeep
 
-# Models
-models/
+# ML model binaries (repo root only — do not use bare `models/`, it ignores app/db/models/)
+/models/
 
 # IDE
 .idea/

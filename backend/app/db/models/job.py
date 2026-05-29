@@ -1,0 +1,2 @@
+﻿"""IngestionJob ORM model."""
+
