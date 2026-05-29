@@ -49,11 +49,7 @@ export function useStreamingAnswer() {
       setError(null);
 
       try {
-        await streamQuery(
-          { query, language, top_k: topK },
-          handleEvent,
-          controller.signal,
-        );
+        await streamQuery({ query, language, top_k: topK }, handleEvent, controller.signal);
       } catch (error) {
         if (controller.signal.aborted) {
           return;

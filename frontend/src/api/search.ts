@@ -58,9 +58,7 @@ export async function streamQuery(
     buffer = parts.pop() ?? "";
 
     for (const part of parts) {
-      const dataLine = part
-        .split("\n")
-        .find((line) => line.startsWith("data:"));
+      const dataLine = part.split("\n").find((line) => line.startsWith("data:"));
       if (!dataLine) {
         continue;
       }

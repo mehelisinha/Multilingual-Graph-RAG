@@ -34,6 +34,5 @@ export const useQueryStore = create<QueryState>((set) => ({
   setDetectedLanguage: (detectedLanguage) => set({ detectedLanguage }),
   setSearching: (isSearching) => set({ isSearching }),
   setError: (error) => set({ error }),
-  resetResults: () =>
-    set({ answer: "", chunks: [], detectedLanguage: null, error: null }),
+  resetResults: () => set({ answer: "", chunks: [], detectedLanguage: null, error: null }),
 }));

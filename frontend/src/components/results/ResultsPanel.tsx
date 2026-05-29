@@ -25,11 +25,7 @@ export function ResultsPanel({
         </div>
       ) : null}
 
-      <AnswerStream
-        answer={answer}
-        isSearching={isSearching}
-        detectedLanguage={detectedLanguage}
-      />
+      <AnswerStream answer={answer} isSearching={isSearching} detectedLanguage={detectedLanguage} />
 
       {chunks.length > 0 ? (
         <section className="space-y-3">

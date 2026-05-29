@@ -47,11 +47,7 @@ export function SearchBar({
       </label>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <LanguageSelect
-          value={language}
-          onChange={onLanguageChange}
-          disabled={isSearching}
-        />
+        <LanguageSelect value={language} onChange={onLanguageChange} disabled={isSearching} />
         <label className="flex flex-col gap-1 text-sm text-slate-600">
           <span className="font-medium">Results (top-k)</span>
           <select

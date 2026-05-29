@@ -6,16 +6,7 @@ import { useQueryStore } from "../store/queryStore";
 
 export function SearchPage() {
   const { query, setQuery, answer, chunks, detectedLanguage } = useQueryStore();
-  const {
-    language,
-    topK,
-    isSearching,
-    error,
-    setLanguage,
-    setTopK,
-    submit,
-    cancel,
-  } = useSearch();
+  const { language, topK, isSearching, error, setLanguage, setTopK, submit, cancel } = useSearch();
 
   return (
     <PageWrapper>
