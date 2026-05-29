@@ -1,2 +1,1 @@
-﻿"""Document ORM model."""
-
+"""Document ORM model."""

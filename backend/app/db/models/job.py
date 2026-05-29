@@ -1,2 +1,1 @@
-﻿"""IngestionJob ORM model."""
-
+"""IngestionJob ORM model."""
