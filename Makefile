@@ -1,8 +1,11 @@
-.PHONY: dev dev-infra stop test build lint lint-fix format typecheck install-dev migrate
+.PHONY: dev dev-infra stop test build lint lint-fix format typecheck install-dev install-ci migrate
 
 install-dev:
 	cd backend && pip install -r requirements-dev.txt
 	cd frontend && npm install
+
+install-ci:
+	cd backend && pip install -r requirements-ci.txt
 
 migrate:
 	cd backend && alembic upgrade head

@@ -1,0 +1,9 @@
+# GitHub Actions: lint, mypy, unit tests (no torch / sentence-transformers / data scripts)
+-r requirements-core.txt
+
+ruff==0.15.14
+mypy>=1.10.0
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
+pytest-cov>=5.0.0
+aiosqlite>=0.20.0
