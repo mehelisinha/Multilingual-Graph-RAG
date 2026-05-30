@@ -1,7 +1,7 @@
 // Zustand graph store.
 
-import { create } from 'zustand';
-import { GraphData, GraphNode } from '../types/graph.types';
+import { create } from "zustand";
+import { GraphData, GraphNode } from "../types/graph.types";
 
 interface GraphState {
   data: GraphData | null;

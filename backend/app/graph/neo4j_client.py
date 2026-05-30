@@ -1,8 +1,9 @@
 """Neo4j driver singleton + connection pool."""
 
+from typing import Any
+
 import structlog
-from neo4j import AsyncGraphDatabase, AsyncDriver
-from typing import Optional, Any
+from neo4j import AsyncDriver, AsyncGraphDatabase
 
 from app.core.config import get_settings
 
@@ -11,7 +12,7 @@ settings = get_settings()
 
 class Neo4jClient:
     def __init__(self) -> None:
-        self.driver: Optional[AsyncDriver] = None
+        self.driver: AsyncDriver | None = None
 
     async def connect(self) -> None:
         if not self.driver:
@@ -32,7 +33,7 @@ class Neo4jClient:
         if not self.driver:
             await self.connect()
         assert self.driver is not None
-        
+
         async with self.driver.session(database=settings.neo4j_database) as session:
             result = await session.run(query, parameters, **kwargs)
             return await result.data()

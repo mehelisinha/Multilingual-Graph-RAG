@@ -1,8 +1,9 @@
 """Node labels, relationship types, constraints."""
 
-from enum import Enum
+from enum import StrEnum
 
-class NodeLabel(str, Enum):
+
+class NodeLabel(StrEnum):
     DOCUMENT = "Document"
     CHUNK = "Chunk"
     ENTITY = "Entity"
@@ -11,7 +12,8 @@ class NodeLabel(str, Enum):
     PERSON = "Person"
     CONCEPT = "Concept"
 
-class RelType(str, Enum):
+
+class RelType(StrEnum):
     HAS_CHUNK = "HAS_CHUNK"
     MENTIONS = "MENTIONS"
     CITES = "CITES"

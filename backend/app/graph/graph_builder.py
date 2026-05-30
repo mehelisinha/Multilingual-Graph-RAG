@@ -1,9 +1,10 @@
 """Build graph from NER output + doc metadata."""
 
-import structlog
 from typing import Any
 
-from app.graph.cypher_queries import MERGE_DOCUMENT, MERGE_CHUNK, MERGE_ENTITY
+import structlog
+
+from app.graph.cypher_queries import MERGE_CHUNK, MERGE_DOCUMENT, MERGE_ENTITY
 from app.graph.neo4j_client import neo4j_client
 
 logger = structlog.get_logger(__name__)
@@ -41,7 +42,7 @@ async def build_document_graph(doc: dict[str, Any], chunks: list[dict[str, Any]]
                     "entity_type": entity["type"],
                     "language": doc.get("language", "en")
                 })
-        
+
         logger.info("Graph built for document", doc_id=doc["id"], chunks_count=len(chunks))
     except Exception as e:
         logger.error("Failed to build graph", doc_id=doc["id"], error=str(e))

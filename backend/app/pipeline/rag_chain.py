@@ -7,9 +7,9 @@ from app.core.config import Settings, get_settings
 from app.core.logging import get_logger
 from app.pipeline.constants import LanguageCode
 from app.pipeline.generator import AnswerGenerator
+from app.pipeline.graph_enricher import get_graph_context
 from app.pipeline.lang_detect import detect_language
 from app.pipeline.retriever import Retriever
-from app.pipeline.graph_enricher import get_graph_context
 
 logger = get_logger(__name__)
 
@@ -40,7 +40,7 @@ class RAGChain:
                 language=language_filter,
             )
             yield QueryStreamEvent(type="chunks", chunks=chunks)
-            
+
             chunk_ids = [c.id for c in chunks]
             graph_context = await get_graph_context(chunk_ids)
 

@@ -1,8 +1,9 @@
 """spaCy multilingual NER."""
 
+from typing import Any
+
 import spacy
 import structlog
-from typing import Any
 
 logger = structlog.get_logger(__name__)
 
@@ -20,7 +21,7 @@ class NERExtractor:
         """Extracts ORG, PER, LOC, MISC entities from text."""
         if not text:
             return []
-            
+
         nlp = self.nlp_de if language == "de" and self.nlp_de else self.nlp_multi
         if not nlp:
             return []

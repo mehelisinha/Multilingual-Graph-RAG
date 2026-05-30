@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.api.v1.routes import auth, health, query, graph
+from app.api.v1.routes import auth, graph, health, query
 
 api_router = APIRouter()
 api_router.include_router(auth.router)

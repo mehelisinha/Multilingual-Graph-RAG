@@ -1,7 +1,8 @@
 """Graph API routes for visualization."""
 
-from fastapi import APIRouter, Depends, HTTPException
 from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.db.models.user import User
 from app.dependencies import get_current_user
@@ -19,7 +20,7 @@ async def get_entities(
         results = await neo4j_client.execute_query(GET_ALL_ENTITIES)
         return results
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 @router.get("/subgraph/{entity_id}")
 async def get_subgraph(
@@ -36,12 +37,11 @@ async def get_subgraph(
             r = record.get("r")
             n = record.get("n")
             if e:
-                nodes[e.get("id")] = {"id": e.get("id"), "name": e.get("name"), "type": e.get("type"), "label": list(e.labels)[0] if e.labels else "Entity"}
-            if n:
-                if hasattr(n, "labels"):
-                    label = list(n.labels)[0] if n.labels else "Unknown"
-                    nodes[n.get("id", str(n.element_id))] = {"id": n.get("id", str(n.element_id)), "name": n.get("name") or n.get("title", ""), "type": n.get("type", ""), "label": label}
-            
+                nodes[e.get("id")] = {"id": e.get("id"), "name": e.get("name"), "type": e.get("type"), "label": next(iter(e.labels)) if e.labels else "Entity"}
+            if n and hasattr(n, "labels"):
+                label = next(iter(n.labels)) if n.labels else "Unknown"
+                nodes[n.get("id", str(n.element_id))] = {"id": n.get("id", str(n.element_id)), "name": n.get("name") or n.get("title", ""), "type": n.get("type", ""), "label": label}
+
             if isinstance(r, list):
                 for rel in r:
                     edges.append({
@@ -55,7 +55,7 @@ async def get_subgraph(
                     "target": r.nodes[1].get("id", str(r.nodes[1].element_id)),
                     "type": r.type
                 })
-        
+
         # Deduplicate edges
         unique_edges = []
         seen = set()
@@ -67,4 +67,4 @@ async def get_subgraph(
 
         return {"nodes": list(nodes.values()), "links": unique_edges}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

@@ -24,7 +24,7 @@ async def get_graph_context(chunk_ids: list[str]) -> str:
             related_name = record.get("related_name", "")
             if entity and relation and related_name:
                 context_lines.append(f"{entity} {relation} {related_name}")
-        
+
         if context_lines:
             return "Graph Knowledge:\n" + "\n".join(context_lines)
         return ""
