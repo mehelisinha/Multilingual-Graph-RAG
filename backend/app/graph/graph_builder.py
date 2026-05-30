@@ -55,7 +55,9 @@ async def build_document_graph(
                     },
                 )
 
-        logger.info("Graph built for document", doc_id=doc["id"], chunks_count=len(chunks))
+        logger.info(
+            "Graph built for document", doc_id=doc["id"], chunks_count=len(chunks)
+        )
     except Exception as e:
         logger.error("Failed to build graph", doc_id=doc["id"], error=str(e))
         raise

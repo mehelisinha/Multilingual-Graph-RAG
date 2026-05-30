@@ -44,4 +44,5 @@ class Neo4jClient:
             result = await session.run(query, parameters, **kwargs)
             return await result.data()
 
+
 neo4j_client = Neo4jClient()

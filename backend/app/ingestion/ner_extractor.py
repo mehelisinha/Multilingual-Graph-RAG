@@ -14,7 +14,9 @@ class NERExtractor:
             self.nlp_multi = spacy.load("xx_ent_wiki_sm")
             self.nlp_de = spacy.load("de_core_news_sm")
         except OSError as e:
-            logger.warning(f"Failed to load spaCy models, please run 'python -m spacy download xx_ent_wiki_sm'. Error: {e}")
+            logger.warning(
+                f"Failed to load spaCy models, please run 'python -m spacy download xx_ent_wiki_sm'. Error: {e}"
+            )
             self.nlp_multi = None
             self.nlp_de = None
 
@@ -36,11 +38,9 @@ class NERExtractor:
             if ent_type in ("ORG", "PER", "LOC", "MISC", "LAW"):
                 key = f"{ent.text}_{ent_type}"
                 if key not in seen:
-                    entities.append({
-                        "name": ent.text,
-                        "type": ent_type
-                    })
+                    entities.append({"name": ent.text, "type": ent_type})
                     seen.add(key)
         return entities
+
 
 ner_extractor = NERExtractor()
