@@ -31,9 +31,7 @@ async def get_subgraph(
 ) -> dict[str, Any]:
     """Get 2-hop neighborhood for a specific entity."""
     try:
-        results = await neo4j_client.execute_query(
-            GET_SUBGRAPH, {"entity_id": entity_id}
-        )
+        results = await neo4j_client.execute_query(GET_SUBGRAPH, {"entity_id": entity_id})
         nodes = {}
         edges = []
         for record in results:
