@@ -7,6 +7,7 @@ import structlog
 
 logger = structlog.get_logger(__name__)
 
+
 class NERExtractor:
     def __init__(self) -> None:
         try:

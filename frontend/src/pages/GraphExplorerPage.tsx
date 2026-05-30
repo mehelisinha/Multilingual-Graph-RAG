@@ -19,7 +19,7 @@ export function GraphExplorerPage() {
       try {
         const data = await graphApi.getSubgraph(id);
         state.setData(data);
-      } catch (e: any) {
+      } catch {
         toast.error("Failed to load subgraph");
       } finally {
         state.setLoading(false);
@@ -33,7 +33,7 @@ export function GraphExplorerPage() {
       try {
         const data = await graphApi.getEntities();
         setEntities(data);
-      } catch (err) {
+      } catch {
         toast.error("Failed to load entities list");
       } finally {
         setLoading(false);

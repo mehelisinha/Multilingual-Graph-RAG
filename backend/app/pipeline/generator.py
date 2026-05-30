@@ -20,7 +20,12 @@ _LANGUAGE_NAMES: dict[LanguageCode, str] = {
 }
 
 
-def build_prompt(query: str, chunks: list[ChunkResult], answer_language: LanguageCode, graph_context: str = "") -> str:
+def build_prompt(
+    query: str,
+    chunks: list[ChunkResult],
+    answer_language: LanguageCode,
+    graph_context: str = "",
+) -> str:
     lang_name = _LANGUAGE_NAMES.get(answer_language, "English")
     context_blocks = []
     for index, chunk in enumerate(chunks, start=1):

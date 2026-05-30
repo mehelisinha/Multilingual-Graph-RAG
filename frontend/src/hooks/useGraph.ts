@@ -24,8 +24,8 @@ export function useGraph() {
       try {
         const graphData = await graphApi.getSubgraph(entityId);
         setData(graphData);
-      } catch (err: any) {
-        const msg = err.response?.data?.detail || err.message || "Failed to fetch subgraph";
+      } catch (error: unknown) {
+        const msg = (error as any).response?.data?.detail || (error as any).message || "Failed to fetch subgraph";
         setError(msg);
         toast.error(msg);
       } finally {

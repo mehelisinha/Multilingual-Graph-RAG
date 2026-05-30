@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Batch embed MultiEURLEX JSONL records and load them into Milvus."""
 
 from __future__ import annotations
@@ -15,8 +15,8 @@ BACKEND = ROOT / "backend"
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
 
-from app.core.config import get_settings
-from app.ingestion.indexing import index_document_text
+from app.core.config import get_settings  # noqa: E402
+from app.ingestion.indexing import index_document_text  # noqa: E402
 
 DEFAULT_INPUT = ROOT / "data" / "raw" / "multieurlex"
 

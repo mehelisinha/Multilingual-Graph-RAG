@@ -10,6 +10,7 @@ from app.core.config import get_settings
 logger = structlog.get_logger(__name__)
 settings = get_settings()
 
+
 class Neo4jClient:
     def __init__(self) -> None:
         self.driver: AsyncDriver | None = None
@@ -29,7 +30,12 @@ class Neo4jClient:
             self.driver = None
             logger.info("Closed Neo4j connection")
 
-    async def execute_query(self, query: str, parameters: dict[str, Any] | None = None, **kwargs: Any) -> list[dict[str, Any]]:
+    async def execute_query(
+        self,
+        query: str,
+        parameters: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> list[dict[str, Any]]:
         if not self.driver:
             await self.connect()
         assert self.driver is not None

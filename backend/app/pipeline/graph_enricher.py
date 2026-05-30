@@ -7,6 +7,7 @@ from app.graph.neo4j_client import neo4j_client
 
 logger = structlog.get_logger(__name__)
 
+
 async def get_graph_context(chunk_ids: list[str]) -> str:
     """Retrieve structured graph context string for a list of chunk IDs."""
     if not chunk_ids:
