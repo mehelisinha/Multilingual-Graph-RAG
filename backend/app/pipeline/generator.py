@@ -20,7 +20,7 @@ _LANGUAGE_NAMES: dict[LanguageCode, str] = {
 }
 
 
-def build_prompt(query: str, chunks: list[ChunkResult], answer_language: LanguageCode) -> str:
+def build_prompt(query: str, chunks: list[ChunkResult], answer_language: LanguageCode, graph_context: str = "") -> str:
     lang_name = _LANGUAGE_NAMES.get(answer_language, "English")
     context_blocks = []
     for index, chunk in enumerate(chunks, start=1):
@@ -32,6 +32,7 @@ def build_prompt(query: str, chunks: list[ChunkResult], answer_language: Languag
         f"You are a multilingual legal research assistant. Answer in {lang_name}.\n"
         "Use only the provided context. Cite sources as [1], [2], etc.\n\n"
         f"Context:\n{context}\n\n"
+        f"{graph_context}\n\n"
         f"Question: {query}\n\n"
         "Answer:"
     )
@@ -60,8 +61,9 @@ class AnswerGenerator:
         query: str,
         chunks: list[ChunkResult],
         answer_language: LanguageCode,
+        graph_context: str = "",
     ) -> AsyncIterator[str]:
-        prompt = build_prompt(query, chunks, answer_language)
+        prompt = build_prompt(query, chunks, answer_language, graph_context)
         streamed = False
         async for token in self._stream_ollama(prompt):
             streamed = True

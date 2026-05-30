@@ -34,6 +34,7 @@ class StubAnswerGenerator:
         query: str,
         chunks: list[ChunkResult],
         answer_language: str,
+        graph_context: str = "",
     ) -> AsyncIterator[str]:
         yield "Test "
         yield "answer."

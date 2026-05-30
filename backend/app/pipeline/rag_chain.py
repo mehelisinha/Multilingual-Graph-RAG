@@ -9,6 +9,7 @@ from app.pipeline.constants import LanguageCode
 from app.pipeline.generator import AnswerGenerator
 from app.pipeline.lang_detect import detect_language
 from app.pipeline.retriever import Retriever
+from app.pipeline.graph_enricher import get_graph_context
 
 logger = get_logger(__name__)
 
@@ -39,9 +40,12 @@ class RAGChain:
                 language=language_filter,
             )
             yield QueryStreamEvent(type="chunks", chunks=chunks)
+            
+            chunk_ids = [c.id for c in chunks]
+            graph_context = await get_graph_context(chunk_ids)
 
             answer_parts: list[str] = []
-            async for token in self._generator.stream_answer(request.query, chunks, detected):
+            async for token in self._generator.stream_answer(request.query, chunks, detected, graph_context):
                 answer_parts.append(token)
                 yield QueryStreamEvent(type="token", token=token)
 

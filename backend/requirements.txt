@@ -1,3 +1,0 @@
-﻿# Production / full local runtime
--r requirements-core.txt
--r requirements-ml.txt
