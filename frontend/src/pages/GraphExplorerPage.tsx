@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { PageWrapper } from "../components/layout/PageWrapper";
 import GraphViewer from "../components/graph/GraphViewer";
 import { graphApi } from "../api/graph";
