@@ -1,2 +1,1 @@
-﻿"""Data quality checks."""
-
+"""Data quality checks."""

@@ -1,2 +1,1 @@
-﻿"""EUR-Lex OAI-PMH bulk download."""
-
+"""EUR-Lex OAI-PMH bulk download."""

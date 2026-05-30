@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Download MultiEURLEX samples from HuggingFace into data/raw/multieurlex."""
 
 from __future__ import annotations
@@ -39,7 +39,9 @@ def main() -> None:
     try:
         from datasets import load_dataset
     except ImportError as exc:
-        raise SystemExit("Install dev deps: pip install -r backend/requirements-dev.txt") from exc
+        raise SystemExit(
+            "Install dev deps: pip install -r backend/requirements-dev.txt"
+        ) from exc
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     dataset = load_dataset("multi_eurlex", "all", split="train", streaming=True)

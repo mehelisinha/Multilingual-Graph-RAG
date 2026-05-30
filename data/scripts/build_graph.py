@@ -1,2 +1,1 @@
-﻿"""Batch NER and Neo4j graph population."""
-
+"""Batch NER and Neo4j graph population."""

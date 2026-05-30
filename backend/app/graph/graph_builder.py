@@ -10,9 +10,7 @@ from app.graph.neo4j_client import neo4j_client
 logger = structlog.get_logger(__name__)
 
 
-async def build_document_graph(
-    doc: dict[str, Any], chunks: list[dict[str, Any]]
-) -> None:
+async def build_document_graph(doc: dict[str, Any], chunks: list[dict[str, Any]]) -> None:
     """Populates Neo4j with Document, Chunks, and Entities."""
     try:
         # 1. Merge Document

@@ -60,12 +60,8 @@ async def get_subgraph(
                 for rel in r:
                     edges.append(
                         {
-                            "source": rel.nodes[0].get(
-                                "id", str(rel.nodes[0].element_id)
-                            ),
-                            "target": rel.nodes[1].get(
-                                "id", str(rel.nodes[1].element_id)
-                            ),
+                            "source": rel.nodes[0].get("id", str(rel.nodes[0].element_id)),
+                            "target": rel.nodes[1].get("id", str(rel.nodes[1].element_id)),
                             "type": rel.type,
                         }
                     )

@@ -79,7 +79,9 @@ def main() -> None:
         total_chunks += inserted
         count += 1
 
-    print(f"Indexed {count} documents ({total_chunks} chunks) into {settings.milvus_collection_name}")
+    print(
+        f"Indexed {count} documents ({total_chunks} chunks) into {settings.milvus_collection_name}"
+    )
 
 
 if __name__ == "__main__":
