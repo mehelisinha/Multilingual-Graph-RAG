@@ -44,7 +44,7 @@ def main() -> None:
         ) from exc
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    dataset = load_dataset("multi_eurlex", "all", split="train", streaming=True)
+    dataset = load_dataset("multi_eurlex", "all_languages", split="train", streaming=True, trust_remote_code=True)
 
     records: list[dict[str, str]] = []
     for row in dataset:
