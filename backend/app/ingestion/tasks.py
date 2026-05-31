@@ -26,7 +26,7 @@ def run_async(coro: Any) -> Any:
         return loop.run_until_complete(coro)
 
 
-@celery_app.task(bind=True, max_retries=3, default_retry_delay=10)
+@celery_app.task(bind=True, max_retries=3, default_retry_delay=10)  # type: ignore
 def build_graph_for_document_task(
     self: Any,
     document_id: str,
@@ -57,11 +57,11 @@ def build_graph_for_document_task(
             entities = ner_extractor.extract_entities(chunk.text, language=resolved_language)
             graph_chunks.append(
                 {
-                    "id": chunk.id,
+                    "id": chunk.chunk_id,
                     "text": chunk.text,
-                    "embedding_id": chunk.id,
+                    "embedding_id": chunk.chunk_id,
                     "chunk_index": chunk.chunk_index,
-                    "token_count": chunk.token_count,
+                    "token_count": len(chunk.text.split()),
                     "language": chunk.language,
                     "entities": entities,
                 }
@@ -99,6 +99,7 @@ def build_graph_for_document_task(
         logger.exception("Document ingestion task failed", document_id=document_id, error=str(exc))
         try:
             self.retry(exc=exc)
+            return {"status": "retrying"}
         except Exception:
             return {
                 "status": "failure",
