@@ -62,7 +62,7 @@ jobs:
           cache-dependency-glob: backend/uv.lock
 
       - name: Install CI dependencies
-        run: uv sync --frozen --group ci && uv pip install "setuptools>=69.0.0,<70.0.0"
+        run: uv sync --frozen --group ci && uv pip install "setuptools>=69.0.0,<70.0.0" pip
 
       - name: Download spaCy models
         run: uv run python -m spacy download en_core_web_sm && uv run python -m spacy download de_core_news_sm
