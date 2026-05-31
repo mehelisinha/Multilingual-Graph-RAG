@@ -10,6 +10,8 @@ logger = structlog.get_logger(__name__)
 
 class NERExtractor:
     def __init__(self) -> None:
+        self.nlp_multi: Any = None
+        self.nlp_de: Any = None
         try:
             self.nlp_multi = spacy.load("xx_ent_wiki_sm")
             self.nlp_de = spacy.load("de_core_news_sm")
