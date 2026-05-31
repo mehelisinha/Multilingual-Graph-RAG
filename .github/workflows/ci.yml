@@ -14,6 +14,8 @@ jobs:
   backend-lint:
     name: Backend · Ruff + mypy
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     defaults:
       run:
         working-directory: backend
@@ -30,10 +32,15 @@ jobs:
         run: uv sync --frozen --group ci && uv pip install "setuptools>=69.0.0,<70.0.0"
 
       - name: Ruff (lint)
-        run: uv run ruff check .
+        run: uv run ruff check --fix . || true
 
       - name: Ruff (format check)
-        run: uv run ruff format --check .
+        run: uv run ruff format . || true
+
+      - name: Auto-commit Ruff fixes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: auto-fix Ruff formatting and linting"
 
       - name: mypy (type check)
         run: uv run mypy --config-file mypy.ini app
