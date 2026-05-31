@@ -65,7 +65,7 @@ jobs:
         run: uv sync --frozen --group ci && uv pip install "setuptools>=69.0.0,<70.0.0" pip
 
       - name: Download spaCy models
-        run: uv run python -m spacy download en_core_web_sm && uv run python -m spacy download de_core_news_sm
+        run: uv pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-3.7.0/de_core_news_sm-3.7.0-py3-none-any.whl
 
       - name: Run unit tests
         run: uv run pytest -m "unit or not integration and not e2e" --cov=app --cov-report=term-missing
