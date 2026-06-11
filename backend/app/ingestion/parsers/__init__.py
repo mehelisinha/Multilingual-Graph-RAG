@@ -1,4 +1,5 @@
 """Parsers export."""
+
 from app.ingestion.parsers.base import BaseParser
 from app.ingestion.parsers.html_parser import HTMLParser
 from app.ingestion.parsers.pdf_parser import PDFParser

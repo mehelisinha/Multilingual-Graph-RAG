@@ -12,6 +12,7 @@ from app.dependencies import get_current_user, get_db
 
 router = APIRouter(prefix="/ingest", tags=["ingest"])
 
+
 @router.get("/{job_id}")
 async def get_job_status(
     job_id: str,
@@ -32,5 +33,5 @@ async def get_job_status(
         "progress": job.progress,
         "error_message": job.error_message,
         "created_at": job.created_at,
-        "updated_at": job.updated_at
+        "updated_at": job.updated_at,
     }

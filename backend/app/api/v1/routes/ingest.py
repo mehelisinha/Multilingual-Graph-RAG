@@ -100,16 +100,20 @@ async def websocket_job_status(websocket: WebSocket, job_id: str) -> None:
     try:
         while True:
             async with session_factory() as session:
-                result = await session.execute(select(IngestionJob).where(IngestionJob.id == job_id))
+                result = await session.execute(
+                    select(IngestionJob).where(IngestionJob.id == job_id)
+                )
                 job = result.scalar_one_or_none()
                 if job:
-                    await websocket.send_json({
-                        "job_id": job.id,
-                        "status": job.status,
-                        "current_stage": job.current_stage,
-                        "progress": job.progress,
-                        "error_message": job.error_message,
-                    })
+                    await websocket.send_json(
+                        {
+                            "job_id": job.id,
+                            "status": job.status,
+                            "current_stage": job.current_stage,
+                            "progress": job.progress,
+                            "error_message": job.error_message,
+                        }
+                    )
                     if job.status in ["COMPLETED", "FAILED"]:
                         break
             await asyncio.sleep(1)

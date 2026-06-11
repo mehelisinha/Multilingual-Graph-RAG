@@ -84,9 +84,7 @@ async def _set_document_status(
     if chunk_count is not None:
         values["chunk_count"] = chunk_count
     async with get_session_factory()() as session:
-        await session.execute(
-            update(Document).where(Document.id == document_id).values(**values)
-        )
+        await session.execute(update(Document).where(Document.id == document_id).values(**values))
         await session.commit()
 
 

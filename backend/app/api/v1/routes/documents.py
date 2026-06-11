@@ -19,6 +19,7 @@ logger = get_logger(__name__)
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
+
 @router.get("")
 async def list_documents(
     current_user: User = Depends(get_current_user),
@@ -40,6 +41,7 @@ async def list_documents(
         }
         for doc in docs
     ]
+
 
 @router.delete("/{document_id}")
 async def delete_document(
