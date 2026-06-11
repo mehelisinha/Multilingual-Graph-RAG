@@ -32,55 +32,20 @@ async def get_subgraph(
     """Get 2-hop neighborhood for a specific entity."""
     try:
         results = await neo4j_client.execute_query(GET_SUBGRAPH, {"entity_id": entity_id})
-        nodes = {}
-        edges = []
+        nodes: dict[str, dict[str, Any]] = {}
+        edges: list[dict[str, Any]] = []
+        seen: set[tuple[str, str, str]] = set()
         for record in results:
-            e = record.get("e")
-            r = record.get("r")
-            n = record.get("n")
-            if e:
-                nodes[e.get("id")] = {
-                    "id": e.get("id"),
-                    "name": e.get("name"),
-                    "type": e.get("type"),
-                    "label": next(iter(e.labels)) if e.labels else "Entity",
-                }
-            if n and hasattr(n, "labels"):
-                label = next(iter(n.labels)) if n.labels else "Unknown"
-                nodes[n.get("id", str(n.element_id))] = {
-                    "id": n.get("id", str(n.element_id)),
-                    "name": n.get("name") or n.get("title", ""),
-                    "type": n.get("type", ""),
-                    "label": label,
-                }
-
-            if isinstance(r, list):
-                for rel in r:
-                    edges.append(
-                        {
-                            "source": rel.nodes[0].get("id", str(rel.nodes[0].element_id)),
-                            "target": rel.nodes[1].get("id", str(rel.nodes[1].element_id)),
-                            "type": rel.type,
-                        }
-                    )
-            elif r:
-                edges.append(
-                    {
-                        "source": rel.nodes[0].get("id", str(rel.nodes[0].element_id)),
-                        "target": rel.nodes[1].get("id", str(rel.nodes[1].element_id)),
-                        "type": rel.type,
-                    }
-                )
-
-        # Deduplicate edges
-        unique_edges = []
-        seen = set()
-        for edge in edges:
-            key = f"{edge['source']}-{edge['type']}-{edge['target']}"
+            source = record["source"]
+            target = record["target"]
+            rel_type = record["rel_type"]
+            nodes[source["id"]] = source
+            nodes[target["id"]] = target
+            key = (source["id"], rel_type, target["id"])
             if key not in seen:
                 seen.add(key)
-                unique_edges.append(edge)
+                edges.append({"source": source["id"], "target": target["id"], "type": rel_type})
 
-        return {"nodes": list(nodes.values()), "links": unique_edges}
+        return {"nodes": list(nodes.values()), "links": edges}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e

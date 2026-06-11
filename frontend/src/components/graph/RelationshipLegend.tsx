@@ -1,12 +1,4 @@
-const LEGEND_ITEMS = [
-  { label: "Document", color: "bg-blue-500" },
-  { label: "Chunk", color: "bg-gray-400" },
-  { label: "LegalArticle", color: "bg-emerald-500" },
-  { label: "Organisation", color: "bg-amber-500" },
-  { label: "Person", color: "bg-purple-500" },
-  { label: "Concept", color: "bg-indigo-500" },
-  { label: "Selected", color: "bg-red-500" },
-];
+import { LEGEND_ITEMS } from "./nodeColors";
 
 export default function RelationshipLegend() {
   return (
@@ -17,7 +9,7 @@ export default function RelationshipLegend() {
       <div className="flex flex-col gap-1.5">
         {LEGEND_ITEMS.map((item) => (
           <div key={item.label} className="flex items-center gap-2">
-            <div className={`w-3 h-3 rounded-full ${item.color}`}></div>
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
             <span className="text-xs text-gray-600">{item.label}</span>
           </div>
         ))}

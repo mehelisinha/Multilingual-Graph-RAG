@@ -5,6 +5,7 @@ import { GraphNode } from "../../types/graph.types";
 import EntityTooltip from "./EntityTooltip";
 import GraphControls from "./GraphControls";
 import RelationshipLegend from "./RelationshipLegend";
+import { getNodeColor, SELECTED_COLOR } from "./nodeColors";
 
 export default function GraphViewer() {
   const { data, selectedEntity, setSelectedEntity, fetchSubgraph } = useGraph();
@@ -35,25 +36,10 @@ export default function GraphViewer() {
     );
   }
 
-  const getNodeColor = (node: object) => {
+  const nodeColor = (node: object) => {
     const n = node as GraphNode;
-    if (selectedEntity?.id === n.id) return "#ef4444"; // Red for selected
-    switch (n.label) {
-      case "Document":
-        return "#3b82f6";
-      case "Chunk":
-        return "#9ca3af";
-      case "LegalArticle":
-        return "#10b981";
-      case "Organisation":
-        return "#f59e0b";
-      case "Person":
-        return "#8b5cf6";
-      case "Concept":
-        return "#6366f1";
-      default:
-        return "#6b7280";
-    }
+    if (selectedEntity?.id === n.id) return SELECTED_COLOR;
+    return getNodeColor(n.label, n.type);
   };
 
   return (
@@ -62,7 +48,7 @@ export default function GraphViewer() {
         ref={fgRef}
         graphData={data}
         nodeLabel="name"
-        nodeColor={getNodeColor}
+        nodeColor={nodeColor}
         nodeRelSize={6}
         linkColor={() => "#d1d5db"}
         linkDirectionalArrowLength={3.5}

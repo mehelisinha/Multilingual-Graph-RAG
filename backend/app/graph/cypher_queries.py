@@ -42,8 +42,24 @@ LIMIT 50
 """
 
 GET_SUBGRAPH = """
-MATCH (e:Entity {id: $entity_id})-[r*1..2]-(n)
-RETURN e, r, n
+MATCH (e:Entity {id: $entity_id})-[rels*1..2]-()
+UNWIND rels AS rel
+WITH DISTINCT rel
+WITH startNode(rel) AS s, endNode(rel) AS t, type(rel) AS rel_type
+RETURN
+    {
+        id: coalesce(s.id, elementId(s)),
+        name: coalesce(s.name, s.title, ''),
+        type: coalesce(s.type, ''),
+        label: coalesce(head(labels(s)), 'Unknown')
+    } AS source,
+    {
+        id: coalesce(t.id, elementId(t)),
+        name: coalesce(t.name, t.title, ''),
+        type: coalesce(t.type, ''),
+        label: coalesce(head(labels(t)), 'Unknown')
+    } AS target,
+    rel_type
 """
 
 GET_ALL_ENTITIES = """
@@ -51,4 +67,10 @@ MATCH (e:Entity)
 RETURN e.id AS id, e.name AS name, e.type AS type, count{ (e)--() } AS degree
 ORDER BY degree DESC
 LIMIT 100
+"""
+
+DELETE_DOCUMENT = """
+MATCH (d:Document {id: $doc_id})
+OPTIONAL MATCH (d)-[:HAS_CHUNK]->(c:Chunk)
+DETACH DELETE c, d
 """
