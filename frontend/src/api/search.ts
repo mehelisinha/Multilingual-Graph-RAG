@@ -31,6 +31,7 @@ export async function streamQuery(
       language: request.language ?? "auto",
       top_k: request.top_k ?? 10,
       use_graph: request.use_graph ?? false,
+      rerank: request.rerank ?? true,
     }),
     signal,
   });

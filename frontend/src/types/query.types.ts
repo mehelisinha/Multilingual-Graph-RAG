@@ -7,6 +7,7 @@ export interface QueryRequest {
   language?: LanguageOption | null;
   top_k?: number;
   use_graph?: boolean;
+  rerank?: boolean;
 }
 
 export interface ChunkResult {

@@ -100,11 +100,11 @@ async def process_records(records: list[dict[str, Any]]) -> None:
                 entities = ner_extractor.extract_entities(chunk.text, language=language)
                 graph_chunks.append(
                     {
-                        "id": chunk.id,
+                        "id": chunk.chunk_id,
                         "text": chunk.text,
-                        "embedding_id": chunk.id,  # Map directly
+                        "embedding_id": chunk.chunk_id,  # Map directly
                         "chunk_index": chunk.chunk_index,
-                        "token_count": chunk.token_count,
+                        "token_count": len(chunk.text.split()),
                         "language": chunk.language,
                         "entities": entities,
                     }

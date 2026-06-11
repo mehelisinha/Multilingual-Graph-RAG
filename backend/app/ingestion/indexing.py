@@ -15,8 +15,12 @@ def index_document_text(
     text: str,
     language: str | None = None,
     settings: Settings | None = None,
-) -> int:
-    """Chunk, embed, and upsert a single document into Milvus."""
+) -> list[TextChunk]:
+    """Chunk, embed, and upsert a single document into Milvus.
+
+    Returns the chunks produced so callers can reuse them (e.g. for NER) instead
+    of re-chunking the same text.
+    """
     cfg = settings or get_settings()
     resolved_language = language or detect_language(text, cfg)
     chunks: list[TextChunk] = chunk_text(
@@ -26,9 +30,10 @@ def index_document_text(
         language=resolved_language,
     )
     if not chunks:
-        return 0
+        return []
 
     embedder = Embedder(cfg)
     vectors = embedder.embed_passages([chunk.text for chunk in chunks])
     store = MilvusStore(cfg)
-    return store.insert_chunks(chunks, vectors)
+    store.insert_chunks(chunks, vectors)
+    return chunks

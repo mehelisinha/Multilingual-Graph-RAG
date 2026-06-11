@@ -4,10 +4,11 @@ Enterprise knowledge intelligence system combining multilingual retrieval-augmen
 
 ## Stack
 
-- **Backend:** FastAPI, SQLAlchemy 2.0 (async), Alembic, JWT auth, Redis
+- **Backend:** FastAPI, SQLAlchemy 2.0 (async), Alembic, JWT auth, Celery, Redis
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Zustand, React Router
-- **Storage:** PostgreSQL, Redis, Neo4j, Milvus (vector retrieval active in Phase 2)
-- **DevOps:** Docker Compose, GitHub Actions CI, Ruff, mypy, ESLint, Prettier
+- **Storage:** PostgreSQL, Redis, Neo4j (knowledge graph), Milvus (vector search)
+- **ML/NLP:** mE5 embeddings, spaCy NER, cross-encoder reranker, fastText/langdetect
+- **DevOps:** Docker Compose, Nginx, GitHub Actions CI, Ruff, mypy, ESLint, Prettier
 
 ## Prerequisites
 
@@ -62,6 +63,20 @@ npm install
 npm run dev
 ```
 
+## Production Deployment
+
+A production-ready Docker Compose configuration is provided, utilizing Nginx as a reverse proxy for the frontend static files and the backend API, along with a dedicated Celery worker for document ingestion.
+
+```bash
+# Build and start the production stack
+docker-compose -f docker-compose.prod.yml up -d --build
+
+# View logs
+docker-compose -f docker-compose.prod.yml logs -f
+```
+
+The production application will be available at `http://localhost`.
+
 ## Available commands
 
 | Command | Description |
@@ -74,22 +89,28 @@ npm run dev
 | `make test` | Run pytest + Vitest |
 | `make typecheck` | Run mypy + tsc |
 
-## Phase 2 — Load sample data and query
+## Load sample data and query
 
 ```bash
 # Download MultiEURLEX sample (requires HuggingFace `datasets`)
 cd backend && pip install -r requirements-dev.txt
 python ../data/scripts/download_multieurlex.py --sample 200
 
+# Alternative if the HuggingFace CDN is blocked: fetch directly from EUR-Lex
+python ../data/scripts/download_eurlex_corpus.py
+
 # Index into Milvus (Milvus must be running: make dev-infra)
 python ../data/scripts/ingest_to_milvus.py
+
+# Build the Neo4j knowledge graph (powers Graph Explorer and graph-enriched answers)
+python ../data/scripts/build_graph.py
 
 # Optional: fastText language model (~900MB)
 mkdir -p models
 curl -L -o models/lid.176.bin https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin
 ```
 
-Use the **Search** page at http://localhost:5173 to run cross-lingual queries. The API streams results via SSE at `POST /api/v1/query`.
+Use the **Search** page at http://localhost:5173 to run cross-lingual queries (results stream via SSE at `POST /api/v1/query`), and the **Graph Explorer** page to browse the knowledge graph around any entity. See [docs/data_pipeline.md](docs/data_pipeline.md) for the full pipeline reference.
 
 ## API endpoints
 
@@ -100,23 +121,35 @@ Use the **Search** page at http://localhost:5173 to run cross-lingual queries. T
 | POST | `/api/v1/auth/logout` | Public | Revoke refresh token |
 | GET | `/api/v1/auth/me` | JWT | Current user profile |
 | POST | `/api/v1/query` | JWT | Multilingual RAG query (SSE stream) |
+| GET | `/api/v1/query/history` | JWT | Recent queries of the current user |
+| GET | `/api/v1/graph/entities` | JWT | Top entities by degree (Graph Explorer sidebar) |
+| GET | `/api/v1/graph/subgraph/{entity_id}` | JWT | 2-hop neighborhood of an entity |
+| POST | `/api/v1/ingest` | JWT | Upload a document (PDF/HTML/XML) for ingestion |
+| GET | `/api/v1/ingest/{job_id}` | JWT | Ingestion job status |
+| WS | `/api/v1/ingest/ws/{job_id}` | JWT | Live ingestion progress updates |
+| GET | `/api/v1/documents` | JWT | List ingested documents |
+| DELETE | `/api/v1/documents/{document_id}` | JWT | Delete a document and its chunks |
 | GET | `/api/v1/health` | Public | Service health check |
 | GET | `/api/v1/metrics` | Public | Prometheus metrics |
 
 ## Project structure
 
 ```
-├── backend/          # FastAPI application
+├── backend/            # FastAPI application
 │   ├── app/
-│   │   ├── api/      # Route handlers + Pydantic schemas
-│   │   ├── core/     # Config, security, middleware, logging
-│   │   ├── db/       # SQLAlchemy models, migrations, Redis
-│   │   └── services/ # Business logic layer
+│   │   ├── api/        # Route handlers + Pydantic schemas
+│   │   ├── core/       # Config, security, middleware, logging
+│   │   ├── db/         # SQLAlchemy models, migrations, Redis, Milvus
+│   │   ├── graph/      # Neo4j client, Cypher queries, graph builder
+│   │   ├── ingestion/  # Parsers, chunker, NER, ingestion pipeline
+│   │   ├── pipeline/   # RAG chain: embedder, retriever, reranker
+│   │   ├── services/   # Business logic layer
+│   │   └── workers/    # Celery app and tasks
 │   └── tests/
-├── frontend/         # React/TypeScript UI
-├── data/             # Dataset scripts (Phase 2+)
-├── infra/            # Nginx, monitoring, k8s
-└── docs/             # Architecture and API docs
+├── frontend/           # React/TypeScript UI
+├── data/               # Corpus download / indexing / graph scripts
+├── infra/              # Nginx, monitoring, k8s
+└── docs/               # Architecture and API docs
 ```
 
 ## Phase roadmap
@@ -125,9 +158,9 @@ Use the **Search** page at http://localhost:5173 to run cross-lingual queries. T
 |-------|--------|--------------|
 | **1 — Foundation** | Complete | Docker stack, FastAPI skeleton, JWT auth, React scaffold, CI |
 | **2 — Multilingual RAG** | Complete | mE5 embeddings, Milvus, fastText/langdetect, query SSE, SearchPage |
-| 3 — Graph Layer | Planned | Neo4j NER, graph traversal, GraphViewer |
-| 4 — Ingestion UI | Planned | Upload, Celery pipeline, Admin dashboard |
-| 5 — Production | Planned | Reranker, Cloud Run deploy, E2E tests |
+| **3 — Graph Layer** | Complete | Neo4j NER, graph traversal, GraphViewer |
+| **4 — Ingestion UI** | Complete | Upload, Celery pipeline, Admin dashboard |
+| **5 — Production** | Complete | Reranker, Cloud Run deploy, E2E tests |
 
 See [docs/architecture.md](docs/architecture.md) and `multilingual_graph_rag_PRD.pdf` for full specifications.
 

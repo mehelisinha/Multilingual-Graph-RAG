@@ -30,6 +30,7 @@ x-backend-env: &backend-env
   OLLAMA_MODEL: ${OLLAMA_MODEL:-mistral:7b-instruct}
   BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-admin@example.com}
   BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-changeme123}
+  UPLOAD_DIR: /app/uploads
 
 services:
   postgres:
@@ -129,14 +130,39 @@ services:
       <<: *backend-env
     volumes:
       - ./backend:/app
+      - backend_venv:/app/.venv
+      - uploads_data:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     command: >
-      sh -c "alembic upgrade head &&
-             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+      sh -c "uv run alembic upgrade head &&
+             uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  worker:
+    build:
+      context: ./backend
+      target: development
+    environment:
+      <<: *backend-env
+    volumes:
+      - ./backend:/app
+      - backend_venv:/app/.venv
+      - uploads_data:/app/uploads
+    depends_on:
+      backend:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      milvus:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    command: uv run celery -A app.workers.celery_app worker --loglevel=info
 
   frontend:
     build:
@@ -161,3 +187,5 @@ volumes:
   minio_data:
   milvus_data:
   frontend_node_modules:
+  backend_venv:
+  uploads_data:

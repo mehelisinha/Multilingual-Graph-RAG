@@ -17,9 +17,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --group dev --extra ml --no-install-project
+# ml extra (torch/sentence-transformers) is omitted: its torch wheel is served from a
+# separate index that the build network blocks. The app falls back to a hashing embedder.
+RUN uv sync --frozen --group dev --no-install-project
 COPY . .
-RUN uv sync --frozen --group dev --extra ml
+RUN uv sync --frozen --group dev
+# Multilingual + German NER models used by the ingestion pipeline.
+# Non-fatal: if the network blocks the model wheels, NER degrades to empty
+# entities at runtime rather than failing the image build.
+RUN uv run python -m spacy download xx_ent_wiki_sm \
+    && uv run python -m spacy download de_core_news_sm \
+    || echo "spaCy model download failed; NER will be disabled at runtime"
 
 EXPOSE 8000
 

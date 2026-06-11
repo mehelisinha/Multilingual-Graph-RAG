@@ -1,5 +1,7 @@
 """Application settings loaded from environment variables."""
 
+import os
+import tempfile
 from functools import lru_cache
 from typing import Literal
 
@@ -48,6 +50,8 @@ class Settings(BaseSettings):
     groq_api_key: str = ""
 
     default_top_k: int = Field(default=10, ge=1, le=20)
+
+    upload_dir: str = os.path.join(tempfile.gettempdir(), "rag_uploads")
 
     neo4j_uri: str = "bolt://localhost:7687"
     neo4j_user: str = "neo4j"

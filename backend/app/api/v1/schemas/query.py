@@ -14,6 +14,7 @@ class QueryRequest(BaseModel):
     language: LanguageCode | Literal["auto"] | None = "auto"
     top_k: int = Field(default=DEFAULT_TOP_K, ge=MIN_TOP_K, le=MAX_TOP_K)
     use_graph: bool = False  # Phase 3
+    rerank: bool = True  # cross-encoder reranking toggle (FR-4.4)
 
 
 class ChunkResult(BaseModel):

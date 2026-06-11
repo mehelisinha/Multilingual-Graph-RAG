@@ -28,6 +28,18 @@ class StubRetriever:
         ]
 
 
+class StubReranker:
+    """Reranker stub: trims to top_k without loading a cross-encoder model."""
+
+    def rerank(
+        self,
+        query: str,
+        chunks: list[ChunkResult],
+        top_k: int,
+    ) -> list[ChunkResult]:
+        return chunks[:top_k]
+
+
 class StubAnswerGenerator:
     async def stream_answer(
         self,

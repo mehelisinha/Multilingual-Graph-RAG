@@ -5,7 +5,7 @@ import pytest
 from app.api.v1.schemas.query import QueryRequest
 from app.core.config import Settings
 from app.pipeline.rag_chain import RAGChain
-from tests.doubles import StubAnswerGenerator, StubRetriever
+from tests.doubles import StubAnswerGenerator, StubReranker, StubRetriever
 
 
 @pytest.mark.asyncio
@@ -14,6 +14,7 @@ async def test_rag_chain_streams_metadata_chunks_and_tokens(test_settings: Setti
         retriever=StubRetriever(),
         generator=StubAnswerGenerator(),
         settings=test_settings,
+        reranker=StubReranker(),
     )
     events = [event async for event in chain.stream(QueryRequest(query="GDPR Article 17"))]
 

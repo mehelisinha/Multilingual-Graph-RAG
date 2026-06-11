@@ -74,6 +74,16 @@ class MilvusStore:
         self._client.insert(collection_name=self._collection, data=rows)
         return len(rows)
 
+    def delete_by_document(self, document_id: str) -> None:
+        """Remove every chunk row belonging to a document from the collection."""
+        if not self._client.has_collection(self._collection):
+            return
+        self._client.delete(
+            collection_name=self._collection,
+            filter=f'document_id == "{document_id}"',
+        )
+        logger.info("milvus_chunks_deleted", document_id=document_id)
+
     def search(
         self,
         query_vector: list[float],

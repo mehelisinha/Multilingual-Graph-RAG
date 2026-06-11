@@ -68,20 +68,33 @@ def main() -> None:
     if args.limit:
         records = records[: args.limit]
 
+    failed: list[str] = []
     for record in tqdm(records, desc="Indexing"):
-        inserted = index_document_text(
-            document_id=str(record["document_id"]),
-            title=str(record.get("title", record["document_id"])),
-            text=str(record["text"]),
-            language=str(record.get("language", "")) or None,
-            settings=settings,
-        )
-        total_chunks += inserted
-        count += 1
+        document_id = str(record["document_id"])
+        for attempt in range(3):
+            try:
+                inserted = index_document_text(
+                    document_id=document_id,
+                    title=str(record.get("title", document_id)),
+                    text=str(record["text"]),
+                    language=str(record.get("language", "")) or None,
+                    settings=settings,
+                )
+            except Exception as exc:
+                if attempt == 2:
+                    print(f"FAILED {document_id}: {exc}")
+                    failed.append(document_id)
+                continue
+            total_chunks += len(inserted)
+            count += 1
+            break
 
     print(
         f"Indexed {count} documents ({total_chunks} chunks) into {settings.milvus_collection_name}"
     )
+    if failed:
+        print(f"{len(failed)} documents failed: {failed}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
