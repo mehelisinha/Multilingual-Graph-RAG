@@ -8,7 +8,7 @@ Enterprise knowledge intelligence system combining multilingual retrieval-augmen
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Zustand, React Router
 - **Storage:** PostgreSQL, Redis, Neo4j (knowledge graph), Milvus (vector search)
 - **ML/NLP:** mE5 embeddings, spaCy NER, cross-encoder reranker, fastText/langdetect
-- **DevOps:** Docker Compose, Nginx, GitHub Actions CI, Ruff, mypy, ESLint, Prettier
+- **DevOps:** Docker Compose, Nginx, GitHub Actions (CI + image publishing), Prometheus, Grafana, Ruff, mypy, ESLint, Prettier
 
 ## Prerequisites
 
@@ -63,19 +63,54 @@ npm install
 npm run dev
 ```
 
-## Production Deployment
+## Production deployment
 
-A production-ready Docker Compose configuration is provided, utilizing Nginx as a reverse proxy for the frontend static files and the backend API, along with a dedicated Celery worker for document ingestion.
+`docker-compose.prod.yml` brings up the whole platform behind Nginx, which serves
+the built frontend and reverse-proxies the API (including the ingestion WebSocket).
+The stack also runs a dedicated Celery worker for document ingestion and a
+Prometheus + Grafana pair for metrics.
 
 ```bash
 # Build and start the production stack
 docker-compose -f docker-compose.prod.yml up -d --build
 
-# View logs
+# Tail the logs
 docker-compose -f docker-compose.prod.yml logs -f
 ```
 
-The production application will be available at `http://localhost`.
+Once it's up:
+
+- App (frontend + API): `http://localhost`
+- Grafana dashboards: `http://localhost:3000` (admin password from `GRAFANA_ADMIN_PASSWORD`, defaults to `admin`)
+
+A couple of things to set before exposing this to the internet: `SECRET_KEY` must be
+a real value (the app refuses to boot in production with the bundled dev key), and
+you'll want to put TLS termination in front of Nginx. Setting `SENTRY_DSN` turns on
+error reporting; leaving it empty keeps Sentry off.
+
+Pushes to `main` build the backend and frontend images and publish them to GitHub
+Container Registry (`ghcr.io/mehelisinha/multilingual-graph-rag-{backend,frontend}`),
+so you can pull tagged images instead of building on the host.
+
+## Production readiness
+
+Where the platform stands today, layer by layer:
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Frontend | ✅ | React + Vite SPA, built and served as static assets |
+| API & backend logic | ✅ | Async FastAPI, Celery workers, streaming RAG pipeline |
+| Database & storage | ✅ | Postgres + Alembic, Redis, Neo4j, Milvus on persistent volumes |
+| Auth & permissions | ✅ | JWT access/refresh, hashed passwords, admin-only upload and delete |
+| Security headers | ✅ | nosniff/frame/referrer on every response, HSTS outside dev, Nginx mirrors them |
+| CI / CD | ✅ | Lint, type-check and tests on every PR; images published to GHCR on merge |
+| Observability | ✅ | Structured logs with request IDs, Prometheus `/metrics`, Grafana dashboard, optional Sentry |
+| Caching | ◐ | Redis for sessions and model caches; no HTTP response cache or CDN yet |
+| Rate limiting | ✗ | Not implemented |
+| Horizontal scaling / LB | ◐ | Celery scales by replica count; single backend instance otherwise |
+| Backups & recovery | ✗ | Relies on Docker volumes; no automated backups yet |
+
+The unchecked items are the natural next steps if this moves to real traffic.
 
 ## Available commands
 
@@ -160,7 +195,7 @@ Use the **Search** page at http://localhost:5173 to run cross-lingual queries (r
 | **2 — Multilingual RAG** | Complete | mE5 embeddings, Milvus, fastText/langdetect, query SSE, SearchPage |
 | **3 — Graph Layer** | Complete | Neo4j NER, graph traversal, GraphViewer |
 | **4 — Ingestion UI** | Complete | Upload, Celery pipeline, Admin dashboard |
-| **5 — Production** | Complete | Reranker, Cloud Run deploy, E2E tests |
+| **5 — Production** | Complete | Reranker, admin RBAC, security headers, monitoring, GHCR image publishing |
 
 See [docs/architecture.md](docs/architecture.md) and `multilingual_graph_rag_PRD.pdf` for full specifications.
 
