@@ -7,6 +7,7 @@ import structlog
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.types import ASGIApp
 
 from app.core.config import Settings
 
@@ -26,7 +27,7 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app: FastAPI, include_hsts: bool = False) -> None:
+    def __init__(self, app: ASGIApp, include_hsts: bool = False) -> None:
         super().__init__(app)
         self._headers = {
             "X-Content-Type-Options": "nosniff",
