@@ -1,6 +1,11 @@
-"""Custom HTTP exception classes."""
+"""Custom HTTP exception classes and global handlers."""
 
-from fastapi import HTTPException, status
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.responses import JSONResponse
+
+from app.core.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class AppHTTPException(HTTPException):
@@ -28,3 +33,22 @@ class NotFoundError(AppHTTPException):
 class PipelineUnavailableError(AppHTTPException):
     def __init__(self, detail: str = "Retrieval pipeline is unavailable") -> None:
         super().__init__(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=detail)
+
+
+async def _unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    """Log unhandled errors with request context and return a clean 500.
+
+    The request_id bound by RequestIDMiddleware is included automatically via
+    structlog contextvars, so log lines correlate with the X-Request-ID header.
+    """
+    logger.exception(
+        "unhandled_exception",
+        method=request.method,
+        path=request.url.path,
+        error=str(exc),
+    )
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})
+
+
+def register_exception_handlers(app: FastAPI) -> None:
+    app.add_exception_handler(Exception, _unhandled_exception_handler)

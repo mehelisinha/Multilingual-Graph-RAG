@@ -8,6 +8,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.api.v1.router import api_router
 from app.core.config import Settings, get_settings
+from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logging, get_logger
 from app.core.middleware import register_middleware
 from app.db.postgres import dispose_engine, get_session_factory
@@ -38,6 +39,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     cfg = settings or get_settings()
+    if cfg.sentry_dsn:
+        import sentry_sdk
+
+        sentry_sdk.init(dsn=cfg.sentry_dsn, environment=cfg.environment)
     app = FastAPI(
         title="Multilingual Graph RAG Platform",
         version="0.1.0",
@@ -47,6 +52,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.state.settings = cfg
     register_middleware(app, cfg)
+    register_exception_handlers(app)
     app.include_router(api_router, prefix="/api/v1")
     Instrumentator().instrument(app)
     return app
