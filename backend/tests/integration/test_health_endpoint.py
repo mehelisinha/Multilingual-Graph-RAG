@@ -21,3 +21,12 @@ async def test_metrics_endpoint(client: AsyncClient) -> None:
     response = await client.get("/api/v1/metrics")
     assert response.status_code == 200
     assert "text/plain" in response.headers.get("content-type", "")
+
+
+@pytest.mark.integration
+async def test_security_headers_present(client: AsyncClient) -> None:
+    response = await client.get("/api/v1/health")
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+    assert response.headers["X-Frame-Options"] == "DENY"
+    assert response.headers["Referrer-Policy"] == "strict-origin-when-cross-origin"
+    assert response.headers["X-Request-ID"]

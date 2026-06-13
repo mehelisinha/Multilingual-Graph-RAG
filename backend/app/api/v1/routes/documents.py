@@ -1,6 +1,7 @@
 """GET /documents — CRUD for ingested documents."""
 
 import asyncio
+import uuid
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -11,7 +12,7 @@ from app.core.logging import get_logger
 from app.db.milvus import MilvusStore
 from app.db.models.document import Document
 from app.db.models.user import User
-from app.dependencies import get_current_user, get_db
+from app.dependencies import get_current_user, get_db, require_admin
 from app.graph.cypher_queries import DELETE_DOCUMENT
 from app.graph.neo4j_client import neo4j_client
 
@@ -45,8 +46,8 @@ async def list_documents(
 
 @router.delete("/{document_id}")
 async def delete_document(
-    document_id: str,
-    current_user: User = Depends(get_current_user),
+    document_id: uuid.UUID,
+    current_user: User = Depends(require_admin),
     session: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:
     result = await session.execute(select(Document).where(Document.id == document_id))
@@ -58,15 +59,16 @@ async def delete_document(
     # Best-effort removal from the vector store and knowledge graph. A failure in
     # either external store must not leave the relational row dangling, so we log
     # and continue rather than aborting the delete.
+    doc_id = str(document_id)
     try:
-        await asyncio.to_thread(MilvusStore().delete_by_document, document_id)
+        await asyncio.to_thread(MilvusStore().delete_by_document, doc_id)
     except Exception as exc:
-        logger.warning("milvus_delete_failed", document_id=document_id, error=str(exc))
+        logger.warning("milvus_delete_failed", document_id=doc_id, error=str(exc))
 
     try:
-        await neo4j_client.execute_query(DELETE_DOCUMENT, {"doc_id": document_id})
+        await neo4j_client.execute_query(DELETE_DOCUMENT, {"doc_id": doc_id})
     except Exception as exc:
-        logger.warning("neo4j_delete_failed", document_id=document_id, error=str(exc))
+        logger.warning("neo4j_delete_failed", document_id=doc_id, error=str(exc))
 
     await session.delete(doc)
     await session.commit()

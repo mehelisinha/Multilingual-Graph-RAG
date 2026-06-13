@@ -25,14 +25,6 @@ SUBGRAPH_RECORDS = [
 ]
 
 
-async def _auth_headers(client: AsyncClient) -> dict[str, str]:
-    login = await client.post(
-        "/api/v1/auth/login",
-        json={"email": "user@example.com", "password": "Password123!"},
-    )
-    return {"Authorization": f"Bearer {login.json()['access_token']}"}
-
-
 @pytest.mark.asyncio
 async def test_subgraph_requires_auth(client: AsyncClient) -> None:
     response = await client.get("/api/v1/graph/subgraph/ent_1")
@@ -40,15 +32,15 @@ async def test_subgraph_requires_auth(client: AsyncClient) -> None:
 
 
 @pytest.mark.asyncio
-async def test_subgraph_returns_nodes_and_links(client: AsyncClient, seeded_user) -> None:
-    headers = await _auth_headers(client)
-
+async def test_subgraph_returns_nodes_and_links(
+    client: AsyncClient, user_headers: dict[str, str]
+) -> None:
     with patch(
         "app.graph.neo4j_client.neo4j_client.execute_query",
         new_callable=AsyncMock,
         return_value=SUBGRAPH_RECORDS,
     ):
-        response = await client.get("/api/v1/graph/subgraph/ent_1", headers=headers)
+        response = await client.get("/api/v1/graph/subgraph/ent_1", headers=user_headers)
 
     assert response.status_code == 200
     data = response.json()
@@ -65,15 +57,13 @@ async def test_subgraph_returns_nodes_and_links(client: AsyncClient, seeded_user
 
 
 @pytest.mark.asyncio
-async def test_subgraph_empty_result(client: AsyncClient, seeded_user) -> None:
-    headers = await _auth_headers(client)
-
+async def test_subgraph_empty_result(client: AsyncClient, user_headers: dict[str, str]) -> None:
     with patch(
         "app.graph.neo4j_client.neo4j_client.execute_query",
         new_callable=AsyncMock,
         return_value=[],
     ):
-        response = await client.get("/api/v1/graph/subgraph/missing", headers=headers)
+        response = await client.get("/api/v1/graph/subgraph/missing", headers=user_headers)
 
     assert response.status_code == 200
     assert response.json() == {"nodes": [], "links": []}

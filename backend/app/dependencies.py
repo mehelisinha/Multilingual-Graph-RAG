@@ -7,7 +7,7 @@ from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import AuthenticationError
+from app.core.exceptions import AuthenticationError, AuthorizationError
 from app.db.models.user import User
 from app.db.postgres import get_db_session
 from app.pipeline.rag_chain import RAGChain
@@ -44,3 +44,9 @@ async def get_current_user(
     if user is None or not user.is_active:
         raise AuthenticationError()
     return user
+
+
+async def require_admin(current_user: User = Depends(get_current_user)) -> User:
+    if not current_user.is_admin:
+        raise AuthorizationError()
+    return current_user

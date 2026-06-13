@@ -1,5 +1,6 @@
 """GET /jobs — query job status."""
 
+import uuid
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -15,7 +16,7 @@ router = APIRouter(prefix="/ingest", tags=["ingest"])
 
 @router.get("/{job_id}")
 async def get_job_status(
-    job_id: str,
+    job_id: uuid.UUID,
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:

@@ -79,6 +79,18 @@ async def seeded_user(db_session: AsyncSession) -> User:
 
 
 @pytest_asyncio.fixture
+async def seeded_admin(db_session: AsyncSession) -> User:
+    repo = UserRepository(db_session)
+    user = await repo.create(
+        email="admin@example.com",
+        hashed_password=hash_password("AdminPass123!"),
+        is_admin=True,
+    )
+    await db_session.commit()
+    return user
+
+
+@pytest_asyncio.fixture
 async def app(
     test_settings: Settings,
     session_factory,
@@ -110,6 +122,21 @@ async def client(app) -> AsyncGenerator[AsyncClient, None]:
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
+
+
+async def _login_headers(client: AsyncClient, email: str, password: str) -> dict[str, str]:
+    response = await client.post("/api/v1/auth/login", json={"email": email, "password": password})
+    return {"Authorization": f"Bearer {response.json()['access_token']}"}
+
+
+@pytest_asyncio.fixture
+async def user_headers(client: AsyncClient, seeded_user: User) -> dict[str, str]:
+    return await _login_headers(client, "user@example.com", "Password123!")
+
+
+@pytest_asyncio.fixture
+async def admin_headers(client: AsyncClient, seeded_admin: User) -> dict[str, str]:
+    return await _login_headers(client, "admin@example.com", "AdminPass123!")
 
 
 @pytest.fixture(autouse=True)

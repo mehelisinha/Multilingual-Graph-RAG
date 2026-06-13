@@ -3,16 +3,17 @@
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../ui/Button";
 
-const navItems = [
+const navItems: { to: string; label: string; adminOnly?: boolean }[] = [
   { to: "/", label: "Search" },
   { to: "/graph", label: "Graph Explorer" },
   { to: "/documents", label: "Documents" },
-  { to: "/admin", label: "Admin" },
+  { to: "/admin", label: "Admin", adminOnly: true },
 ];
 
 export function Navbar() {
   const location = useLocation();
   const { user, logout } = useAuth();
+  const visibleItems = navItems.filter((item) => !item.adminOnly || user?.is_admin);
 
   return (
     <header className="border-b border-slate-200 bg-white">
@@ -22,7 +23,7 @@ export function Navbar() {
             Multilingual Graph RAG
           </Link>
           <nav className="hidden items-center gap-4 md:flex">
-            {navItems.map((item) => (
+            {visibleItems.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}

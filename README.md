@@ -124,11 +124,11 @@ Use the **Search** page at http://localhost:5173 to run cross-lingual queries (r
 | GET | `/api/v1/query/history` | JWT | Recent queries of the current user |
 | GET | `/api/v1/graph/entities` | JWT | Top entities by degree (Graph Explorer sidebar) |
 | GET | `/api/v1/graph/subgraph/{entity_id}` | JWT | 2-hop neighborhood of an entity |
-| POST | `/api/v1/ingest` | JWT | Upload a document (PDF/HTML/XML) for ingestion |
+| POST | `/api/v1/ingest` | Admin | Upload a document (PDF/HTML/XML) for ingestion |
 | GET | `/api/v1/ingest/{job_id}` | JWT | Ingestion job status |
 | WS | `/api/v1/ingest/ws/{job_id}` | JWT | Live ingestion progress updates |
 | GET | `/api/v1/documents` | JWT | List ingested documents |
-| DELETE | `/api/v1/documents/{document_id}` | JWT | Delete a document and its chunks |
+| DELETE | `/api/v1/documents/{document_id}` | Admin | Delete a document and its chunks |
 | GET | `/api/v1/health` | Public | Service health check |
 | GET | `/api/v1/metrics` | Public | Prometheus metrics |
 

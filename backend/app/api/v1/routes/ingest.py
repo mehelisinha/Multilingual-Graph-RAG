@@ -22,7 +22,7 @@ from app.core.config import get_settings
 from app.db.models.document import Document
 from app.db.models.job import IngestionJob
 from app.db.models.user import User
-from app.dependencies import get_current_user, get_db
+from app.dependencies import get_db, require_admin
 from app.ingestion.pipeline import SUPPORTED_EXTENSIONS
 
 router = APIRouter(prefix="/ingest", tags=["ingest"])
@@ -35,10 +35,10 @@ async def ingest_document(
     file: UploadFile = File(...),
     title: str | None = Form(None),
     language: str | None = Form(None),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_admin),
     session: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:
-    """Upload a document to trigger the async ingestion pipeline."""
+    """Upload a document to trigger the async ingestion pipeline. Admin only."""
     if not file.filename:
         raise HTTPException(status_code=400, detail="Filename missing")
 
@@ -49,12 +49,14 @@ async def ingest_document(
             detail=f"Unsupported file type '{ext}'. Supported: {', '.join(SUPPORTED_EXTENSIONS)}",
         )
 
-    doc_id = str(uuid.uuid4())
-    job_id = str(uuid.uuid4())
+    doc_uuid = uuid.uuid4()
+    job_uuid = uuid.uuid4()
+    doc_id = str(doc_uuid)
+    job_id = str(job_uuid)
 
     # Create Document record
     doc = Document(
-        id=doc_id,
+        id=doc_uuid,
         filename=file.filename,
         title=title or file.filename,
         language=language,
@@ -65,8 +67,8 @@ async def ingest_document(
 
     # Create Job record
     job = IngestionJob(
-        id=job_id,
-        document_id=doc_id,
+        id=job_uuid,
+        document_id=doc_uuid,
         status="PENDING",
         current_stage="UPLOADED",
         progress=0,
@@ -91,7 +93,7 @@ async def ingest_document(
 
 
 @router.websocket("/ws/{job_id}")
-async def websocket_job_status(websocket: WebSocket, job_id: str) -> None:
+async def websocket_job_status(websocket: WebSocket, job_id: uuid.UUID) -> None:
     """Stream job status updates via WebSocket."""
     await websocket.accept()
     from app.db.postgres import get_session_factory
@@ -107,7 +109,7 @@ async def websocket_job_status(websocket: WebSocket, job_id: str) -> None:
                 if job:
                     await websocket.send_json(
                         {
-                            "job_id": job.id,
+                            "job_id": str(job.id),
                             "status": job.status,
                             "current_stage": job.current_stage,
                             "progress": job.progress,

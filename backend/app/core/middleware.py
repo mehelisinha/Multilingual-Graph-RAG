@@ -1,4 +1,4 @@
-"""HTTP middleware: CORS, request ID, and rate limiting hooks."""
+"""HTTP middleware: CORS, request ID, and security headers."""
 
 import uuid
 from collections.abc import Awaitable, Callable
@@ -25,6 +25,28 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
         return response
 
 
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app: FastAPI, include_hsts: bool = False) -> None:
+        super().__init__(app)
+        self._headers = {
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "DENY",
+            "Referrer-Policy": "strict-origin-when-cross-origin",
+        }
+        if include_hsts:
+            self._headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+
+    async def dispatch(
+        self,
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
+        response = await call_next(request)
+        for name, value in self._headers.items():
+            response.headers.setdefault(name, value)
+        return response
+
+
 def register_middleware(app: FastAPI, settings: Settings) -> None:
     app.add_middleware(
         CORSMiddleware,
@@ -34,3 +56,4 @@ def register_middleware(app: FastAPI, settings: Settings) -> None:
         allow_headers=["*"],
     )
     app.add_middleware(RequestIDMiddleware)
+    app.add_middleware(SecurityHeadersMiddleware, include_hsts=not settings.is_development)

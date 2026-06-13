@@ -3,10 +3,12 @@ import { listDocuments, deleteDocument } from "../../api/documents";
 import { DocumentRecord } from "../../types/document.types";
 import { FileText, Trash2, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAuthStore } from "../../store/authStore";
 
 export const DocumentList: React.FC = () => {
   const [documents, setDocuments] = useState<DocumentRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const isAdmin = useAuthStore((state) => state.user?.is_admin ?? false);
 
   const fetchDocuments = async () => {
     setIsLoading(true);
@@ -90,13 +92,15 @@ export const DocumentList: React.FC = () => {
                 </div>
               </div>
 
-              <button
-                onClick={() => handleDelete(doc.id)}
-                className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                title="Delete document"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
+              {isAdmin && (
+                <button
+                  onClick={() => handleDelete(doc.id)}
+                  className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                  title="Delete document"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+              )}
             </li>
           ))}
         </ul>

@@ -5,8 +5,10 @@ import tempfile
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, computed_field
+from pydantic import Field, computed_field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_DEV_SECRET_KEY = "dev-secret-key-minimum-32-characters-long"
 
 
 class Settings(BaseSettings):
@@ -21,10 +23,7 @@ class Settings(BaseSettings):
     )
 
     environment: Literal["development", "production", "test"] = "development"
-    secret_key: str = Field(
-        default="dev-secret-key-minimum-32-characters-long",
-        min_length=32,
-    )
+    secret_key: str = Field(default=_DEV_SECRET_KEY, min_length=32)
     access_token_expire_minutes: int = Field(default=1440, ge=1)
     refresh_token_expire_days: int = Field(default=7, ge=1)
     allowed_origins: str = "http://localhost:5173"
@@ -68,6 +67,14 @@ class Settings(BaseSettings):
 
     jwt_algorithm: str = "HS256"
     jwt_issuer: str = "multilingual-graph-rag"
+
+    sentry_dsn: str = ""
+
+    @model_validator(mode="after")
+    def _forbid_dev_secret_in_production(self) -> "Settings":
+        if self.environment == "production" and self.secret_key == _DEV_SECRET_KEY:
+            raise ValueError("SECRET_KEY must be set to a unique value in production")
+        return self
 
     @computed_field  # type: ignore[prop-decorator]
     @property
